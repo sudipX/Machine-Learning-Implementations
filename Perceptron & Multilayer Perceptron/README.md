@@ -18,36 +18,36 @@ The model is designed for binary classification with an architecture optimized f
 Forward propagation is the process of transforming input data into a prediction through sequential matrix operations.
 
 For any layer $l$, the pre-activation $Z^{[l]}$ is calculated as the weighted sum of the previous layer's output plus a bias:
-$$ \Large Z^{[l]} = W^{[l]} \cdot A^{[l-1]} + b^{[l]} $$
+$$Z^{[l]} = W^{[l]} \cdot A^{[l-1]} + b^{[l]}$$
 
 The activation $A^{[l]}$ is then computed by applying the Sigmoid function $\sigma$ element-wise:
-$$ \Large A^{[l]} = \sigma(Z^{[l]}) = \frac{1}{1 + e^{-Z^{[l]}}} $$
+$$A^{[l]} = \sigma(Z^{[l]}) = \frac{1}{1 + e^{-Z^{[l]}}}$$
 
 ### 2. Loss Function
 To measure the discrepancy between the predicted probability $A^{[2]}$ and the actual label $Y$, we use the Binary Cross-Entropy loss function. For $m$ samples:
-$$ \Large L = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(a^{(i)}) + (1 - y^{(i)}) \log(1 - a^{(i)}) \right] $$
+$$L = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(a^{(i)}) + (1 - y^{(i)}) \log(1 - a^{(i)}) \right]$$
 
 ### 3. Backward Propagation
 Backpropagation calculates the gradient of the loss function with respect to each parameter using the chain rule.
 
 **Step 1: Output Layer Gradients**
 The derivative of the loss with respect to the output pre-activation $Z^{[2]}$ is derived from the combination of Sigmoid and Cross-Entropy, which simplifies elegantly to:
-$$ \Large dZ^{[2]} = \frac{\partial L}{\partial Z^{[2]}} = A^{[2]} - Y $$
+$$dZ^{[2]} = \frac{\partial L}{\partial Z^{[2]}} = A^{[2]} - Y$$
 
 The gradients for the weights and biases of the output layer are:
-$$ \Large dW^{[2]} = \frac{1}{m} dZ^{[2]} \cdot (A^{[1]})^T $$
-$$ \Large db^{[2]} = \frac{1}{m} \sum dZ^{[2]} $$
+$$dW^{[2]} = \frac{1}{m} dZ^{[2]} \cdot (A^{[1]})^T$$
+$$db^{[2]} = \frac{1}{m} \sum dZ^{[2]}$$
 
 **Step 2: Hidden Layer Gradients**
 To find the gradient for the hidden layer, we first compute how the loss changes with respect to the hidden layer activation $A^{[1]}$:
-$$ \Large dA^{[1]} = (W^{[2]})^T \cdot dZ^{[2]} $$
+$$dA^{[1]} = (W^{[2]})^T \cdot dZ^{[2]}$$
 
 We then apply the derivative of the Sigmoid function, where $\sigma'(Z) = \sigma(Z)(1 - \sigma(Z))$, to find the error signal at the hidden layer using element-wise multiplication ($\odot$):
-$$ \Large dZ^{[1]} = dA^{[1]} \odot \sigma'(Z^{[1]}) $$
+$$dZ^{[1]} = dA^{[1]} \odot \sigma'(Z^{[1]})$$
 
 Finally, we calculate the gradients for the first layer parameters:
-$$ \Large dW^{[1]} = \frac{1}{m} dZ^{[1]} \cdot (A^{[0]})^T $$
-$$ \Large db^{[1]} = \frac{1}{m} \sum dZ^{[1]} $$
+$$dW^{[1]} = \frac{1}{m} dZ^{[1]} \cdot (A^{[0]})^T$$
+$$db^{[1]} = \frac{1}{m} \sum dZ^{[1]}$$
 
 ---
 
