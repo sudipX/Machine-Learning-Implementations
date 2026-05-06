@@ -1,65 +1,27 @@
-# Multi-Layer Perceptron from Scratch using NumPy
+# A Simple Multi-Layer Perceptron Implemented from Scratch using NumPy
 
-## Overview
+## Abstract  
+This project presents a minimal implementation of a Multi-Layer Perceptron (MLP) built entirely using NumPy. The objective is to explicitly derive and implement forward propagation, binary cross-entropy loss, and backpropagation without relying on any deep learning frameworks. The model is evaluated on a synthetic two-class dataset in 2D space, demonstrating how gradient-based learning operates at a fundamental level.
 
-This project implements a Multi-Layer Perceptron (MLP) from scratch using only NumPy. No deep learning frameworks such as PyTorch, TensorFlow, or scikit-learn are used. The goal is to understand how neural networks work internally by implementing forward propagation, loss computation, and backpropagation manually.
+## 1. Introduction  
+Neural networks are typically abstracted away by modern frameworks such as PyTorch or TensorFlow. While this enables scalability, it often hides the underlying mechanics of learning. This implementation reconstructs a basic neural network from first principles to clarify how gradients flow through layers and how parameters are updated using gradient descent.
 
-The model performs binary classification on a simple synthetic dataset with two Gaussian-distributed classes.
+The task considered is binary classification on a simple synthetic dataset where two classes are generated from Gaussian distributions centered at (0, 0) and (2, 2). Although the problem is linearly separable, a non-linear model is used to illustrate the full training pipeline of a neural network.
 
----
+## 2. Model Architecture  
+The network consists of an input layer with 2 features, one hidden layer with 4 neurons, and a single output neuron. Sigmoid activation is used in both hidden and output layers.
 
-## Dataset
+Let the input be denoted as \(X \in \mathbb{R}^{2 \times m}\), where \(m\) is the number of training samples.
 
-We generate a simple 2D dataset:
-
-- Class 0: points centered around (0, 0)
-- Class 1: points centered around (2, 2)
-
-Each class contains 100 samples, resulting in a total of 200 data points.
+The forward propagation is defined as:
 
 \[
-X \in \mathbb{R}^{200 \times 2}, \quad y \in \{0,1\}^{200 \times 1}
-\]
-
-The dataset is shuffled and split into:
-- 80% training set
-- 20% test set
-
----
-
-## Model Architecture
-
-The neural network consists of:
-
-- Input layer: 2 features
-- Hidden layer: 4 neurons (sigmoid activation)
-- Output layer: 1 neuron (sigmoid activation)
-
-Structure:
-
-2 → 4 → 1
-
----
-
-## Forward Propagation
-
-Let:
-
-- \(A_0 = X^T\)
-- \(W_1, b_1\): parameters of hidden layer
-- \(W_2, b_2\): parameters of output layer
-
-### Hidden Layer
-
-\[
-Z_1 = W_1 A_0 + b_1
+Z_1 = W_1 X + b_1
 \]
 
 \[
 A_1 = \sigma(Z_1)
 \]
-
-### Output Layer
 
 \[
 Z_2 = W_2 A_1 + b_2
@@ -69,136 +31,104 @@ Z_2 = W_2 A_1 + b_2
 A_2 = \sigma(Z_2)
 \]
 
-Sigmoid function:
+where
 
 \[
 \sigma(z) = \frac{1}{1 + e^{-z}}
 \]
 
----
+and \(A_2\) represents the predicted probability of class 1.
 
-## Loss Function
-
-Binary cross-entropy loss:
+## 3. Loss Function  
+The model is trained using binary cross-entropy loss defined as:
 
 \[
 L = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(a_2^{(i)}) + (1 - y^{(i)}) \log(1 - a_2^{(i)}) \right]
 \]
 
-To avoid numerical instability, predictions are clipped:
+For numerical stability, predictions are clipped to the range \([10^{-8}, 1 - 10^{-8}]\).
 
-\[
-A_2 \in [10^{-8}, 1 - 10^{-8}]
-\]
+## 4. Backpropagation Derivation  
+Training is performed using gradient descent with gradients derived via the chain rule.
 
----
-
-## Backpropagation
-
-### Output Layer
+### Output Layer  
+The derivative simplifies due to the combination of sigmoid activation and cross-entropy loss:
 
 \[
 \frac{\partial L}{\partial Z_2} = A_2 - Y
 \]
 
+Gradients for parameters are:
+
 \[
-dW_2 = \frac{1}{m} dZ_2 A_1^T
+dW_2 = \frac{1}{m} (A_2 - Y) A_1^T
 \]
 
 \[
-db_2 = \frac{1}{m} \sum dZ_2
+db_2 = \frac{1}{m} \sum (A_2 - Y)
 \]
 
----
-
-### Hidden Layer
+### Hidden Layer  
+Error is propagated backward as:
 
 \[
-dA_1 = W_2^T dZ_2
+dA_1 = W_2^T (A_2 - Y)
 \]
 
-\[
-dZ_1 = dA_1 \cdot \sigma'(Z_1)
-\]
-
-Where:
+The element-wise derivative of the sigmoid function is:
 
 \[
 \sigma'(Z_1) = \sigma(Z_1)(1 - \sigma(Z_1))
 \]
 
+Thus,
+
 \[
-dW_1 = \frac{1}{m} dZ_1 A_0^T
+dZ_1 = dA_1 \odot \sigma'(Z_1)
+\]
+
+Gradients for the first layer are:
+
+\[
+dW_1 = \frac{1}{m} dZ_1 X^T
 \]
 
 \[
 db_1 = \frac{1}{m} \sum dZ_1
 \]
 
----
-
-## Parameter Update
-
-Gradient descent update rule:
+## 5. Optimization  
+Parameters are updated using gradient descent:
 
 \[
-W = W - \alpha dW
+W := W - \alpha \frac{\partial L}{\partial W}
 \]
 
 \[
-b = b - \alpha db
+b := b - \alpha \frac{\partial L}{\partial b}
 \]
 
-Where:
-- \( \alpha \) = learning rate
+where \(\alpha\) is the learning rate.
 
----
+## 6. Experimental Setup  
+The dataset consists of 200 samples in 2D space, split into 160 training samples and 40 test samples. Training is performed for 1000 epochs with a learning rate of 0.1. Loss is recorded at each epoch to monitor convergence behavior.
 
-## Training Procedure
+## 7. Evaluation  
+After training, predictions are generated by applying a forward pass and thresholding the output probabilities at 0.5:
 
-For each epoch:
-
-1. Forward propagation
-2. Compute loss
-3. Backpropagation
-4. Update weights using gradient descent
-
-Loss is recorded at every epoch to monitor training progress.
-
----
-
-## Evaluation
-
-Prediction is done using:
-
-- Forward pass on test data
-- Thresholding at 0.5
+\[
+\hat{y} =
+\begin{cases}
+1 & \text{if } A_2 \geq 0.5 \\
+0 & \text{otherwise}
+\end{cases}
+\]
 
 Accuracy is computed as:
 
 \[
-Accuracy = \frac{\text{Correct Predictions}}{\text{Total Samples}} \times 100
+\text{Accuracy} = \frac{\text{Correct Predictions}}{\text{Total Samples}} \times 100
 \]
 
----
-
-## Key Insights
-
-- Small weight initialization prevents sigmoid saturation
-- Backpropagation is a direct application of the chain rule
-- Bias gradients are summed across all samples
-- Weight gradients depend on both error and input activations
-- Matrix multiplication naturally aggregates gradients over the dataset
-
----
-
-## Requirements
-
-- Python 3.x
-- NumPy
-
----
-
-## Summary
-
-This project demonstrates how a neural network learns from scratch without using any deep learning framework. Every component, from forward propagation to gradient descent, is implemented manually using NumPy.
+## 8. Conclusion  
+This implementation demonstrates that a neural network can be fully constructed using only linear algebra and calculus without relying on high-level machine learning libraries. Every stage of the learning process, from forward propagation to gradient updates, is explicitly derived and implemented, providing a transparent view of how neural networks learn from data.
