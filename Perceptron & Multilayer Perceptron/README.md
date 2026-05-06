@@ -1,134 +1,70 @@
-# A Simple Multi-Layer Perceptron Implemented from Scratch using NumPy
+# Multi-Layer Perceptron from Scratch in NumPy
 
-## Abstract  
-This project presents a minimal implementation of a Multi-Layer Perceptron (MLP) built entirely using NumPy. The objective is to explicitly derive and implement forward propagation, binary cross-entropy loss, and backpropagation without relying on any deep learning frameworks. The model is evaluated on a synthetic two-class dataset in 2D space, demonstrating how gradient-based learning operates at a fundamental level.
+This repository contains a comprehensive implementation of a Multi-Layer Perceptron (MLP) built entirely from the ground up using **NumPy**. By avoiding high-level frameworks like PyTorch or TensorFlow, this project provides a transparent look at the underlying linear algebra and calculus that drive neural network learning.
 
-## 1. Introduction  
-Neural networks are typically abstracted away by modern frameworks such as PyTorch or TensorFlow. While this enables scalability, it often hides the underlying mechanics of learning. This implementation reconstructs a basic neural network from first principles to clarify how gradients flow through layers and how parameters are updated using gradient descent.
+## Project Architecture
 
-The task considered is binary classification on a simple synthetic dataset where two classes are generated from Gaussian distributions centered at (0, 0) and (2, 2). Although the problem is linearly separable, a non-linear model is used to illustrate the full training pipeline of a neural network.
+The model is designed for binary classification with an architecture optimized for clarity:
+*   **Input Layer:** 2 features ($x_1, x_2$).
+*   **Hidden Layer:** 4 neurons with Sigmoid activation.
+*   **Output Layer:** 1 neuron with Sigmoid activation.
+*   **Optimization:** Batch Gradient Descent with Binary Cross-Entropy loss.
 
-## 2. Model Architecture  
-The network consists of an input layer with 2 features, one hidden layer with 4 neurons, and a single output neuron. Sigmoid activation is used in both hidden and output layers.
+---
 
-Let the input be denoted as \(X \in \mathbb{R}^{2 \times m}\), where \(m\) is the number of training samples.
+## Mathematical Derivations
 
-The forward propagation is defined as:
+### 1. Forward Propagation
+Forward propagation is the process of transforming input data into a prediction through sequential matrix operations.
 
-\[
-Z_1 = W_1 X + b_1
-\]
+For any layer $l$, the pre-activation $Z^{[l]}$ is calculated as the weighted sum of the previous layer's output plus a bias:
+$$Z^{[l]} = W^{[l]} \cdot A^{[l-1]} + b^{[l]}$$
 
-\[
-A_1 = \sigma(Z_1)
-\]
+The activation $A^{[l]}$ is then computed by applying the Sigmoid function $\sigma$ element-wise:
+$$A^{[l]} = \sigma(Z^{[l]}) = \frac{1}{1 + e^{-Z^{[l]}}}$$
 
-\[
-Z_2 = W_2 A_1 + b_2
-\]
+### 2. Loss Function
+To measure the discrepancy between the predicted probability $A^{[2]}$ and the actual label $Y$, we use the Binary Cross-Entropy loss function. For $m$ samples:
+$$L = -\frac{1}{m} \sum_{i=1}^{m} [y^{(i)} \log(a^{(i)}) + (1 - y^{(i)}) \log(1 - a^{(i)})]$$
 
-\[
-A_2 = \sigma(Z_2)
-\]
+### 3. Backward Propagation
+Backpropagation calculates the gradient of the loss function with respect to each parameter using the chain rule.
 
-where
+**Step 1: Output Layer Gradients**
+The derivative of the loss with respect to the output pre-activation $Z^{[2]}$ is derived from the combination of Sigmoid and Cross-Entropy, which simplifies elegantly to:
+$$dZ^{[2]} = \frac{\partial L}{\partial Z^{[2]}} = A^{[2]} - Y$$
 
-\[
-\sigma(z) = \frac{1}{1 + e^{-z}}
-\]
+The gradients for the weights and biases of the output layer are:
+$$dW^{[2]} = \frac{1}{m} dZ^{[2]} \cdot (A^{[1]})^T$$
+$$db^{[2]} = \frac{1}{m} \sum dZ^{[2]}$$
 
-and \(A_2\) represents the predicted probability of class 1.
+**Step 2: Hidden Layer Gradients**
+To find the gradient for the hidden layer, we first compute how the loss changes with respect to the hidden layer activation $A^{[1]}$:
+$$dA^{[1]} = (W^{[2]})^T \cdot dZ^{[2]}$$
 
-## 3. Loss Function  
-The model is trained using binary cross-entropy loss defined as:
+We then apply the derivative of the Sigmoid function, where $\sigma'(Z) = \sigma(Z)(1 - \sigma(Z))$, to find the error signal at the hidden layer:
+$$dZ^{[1]} = dA^{[1]} \odot \sigma'(Z^{[1]})$$
 
-\[
-L = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(a_2^{(i)}) + (1 - y^{(i)}) \log(1 - a_2^{(i)}) \right]
-\]
+Finally, we calculate the gradients for the first layer parameters:
+$$dW^{[1]} = \frac{1}{m} dZ^{[1]} \cdot (A^{[0]})^T$$
+$$db^{[1]} = \frac{1}{m} \sum dZ^{[1]}$$
 
-For numerical stability, predictions are clipped to the range \([10^{-8}, 1 - 10^{-8}]\).
+---
 
-## 4. Backpropagation Derivation  
-Training is performed using gradient descent with gradients derived via the chain rule.
+## Implementation Overview
 
-### Output Layer  
-The derivative simplifies due to the combination of sigmoid activation and cross-entropy loss:
+### Activation Function
+The project utilizes the Sigmoid function for all neurons. This maps any real-valued input into a range between 0 and 1, making it ideal for probability-based classification.
 
-\[
-\frac{\partial L}{\partial Z_2} = A_2 - Y
-\]
+### Initialization
+Weights are initialized using a small random scale (0.01) from a normal distribution. This prevents "Saturation", where large initial values force the Sigmoid function into flat regions (near 0 or 1) where the gradient is nearly zero, effectively stopping the learning process before it begins.
 
-Gradients for parameters are:
+---
 
-\[
-dW_2 = \frac{1}{m} (A_2 - Y) A_1^T
-\]
+## Execution and Results
 
-\[
-db_2 = \frac{1}{m} \sum (A_2 - Y)
-\]
-
-### Hidden Layer  
-Error is propagated backward as:
-
-\[
-dA_1 = W_2^T (A_2 - Y)
-\]
-
-The element-wise derivative of the sigmoid function is:
-
-\[
-\sigma'(Z_1) = \sigma(Z_1)(1 - \sigma(Z_1))
-\]
-
-Thus,
-
-\[
-dZ_1 = dA_1 \odot \sigma'(Z_1)
-\]
-
-Gradients for the first layer are:
-
-\[
-dW_1 = \frac{1}{m} dZ_1 X^T
-\]
-
-\[
-db_1 = \frac{1}{m} \sum dZ_1
-\]
-
-## 5. Optimization  
-Parameters are updated using gradient descent:
-
-\[
-W := W - \alpha \frac{\partial L}{\partial W}
-\]
-
-\[
-b := b - \alpha \frac{\partial L}{\partial b}
-\]
-
-where \(\alpha\) is the learning rate.
-
-## 6. Experimental Setup  
-The dataset consists of 200 samples in 2D space, split into 160 training samples and 40 test samples. Training is performed for 1000 epochs with a learning rate of 0.1. Loss is recorded at each epoch to monitor convergence behavior.
-
-## 7. Evaluation  
-After training, predictions are generated by applying a forward pass and thresholding the output probabilities at 0.5:
-
-\[
-\hat{y} =
-\begin{cases}
-1 & \text{if } A_2 \geq 0.5 \\
-0 & \text{otherwise}
-\end{cases}
-\]
-
-Accuracy is computed as:
-
-\[
-\text{Accuracy} = \frac{\text{Correct Predictions}}{\text{Total Samples}} \times 100
-\]
-
-## 8. Conclusion  
-This implementation demonstrates that a neural network can be fully constructed using only linear algebra and calculus without relying on high-level machine learning libraries. Every stage of the learning process, from forward propagation to gradient updates, is explicitly derived and implemented, providing a transparent view of how neural networks learn from data.
+### Usage
+To execute the training and evaluation, ensure you have NumPy installed:
+```bash
+pip install numpy
+python perceptron.py
