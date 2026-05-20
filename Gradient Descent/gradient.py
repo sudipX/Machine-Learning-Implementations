@@ -153,7 +153,7 @@ def train(optimser_name, epochs=500, lr=0.01, beta1=0.9, beta2=0.999, eps= 1e-8,
             print(f"[{optimser_name.upper():8s}] "
                   f"Epoch{epoch:4d}  |  Train Loss:{loss:.4f}")
             
-    _,_ = forward_backward(params, X_tr, Y_tr)
+
     Z1 = params['W1'] @ X_te + params['b1']
     A1 = sigmoid(Z1)
     Z2 = params['W2'] @ A1 + params['b2']
