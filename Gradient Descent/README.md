@@ -47,14 +47,14 @@ This creates a simple linearly separable binary classification dataset.
 
 # Neural Network Architecture
 
-Input Layer:
+## Input Layer
 - 2 features
 
-Hidden Layer:
+## Hidden Layer
 - 8 neurons
 - Sigmoid activation
 
-Output Layer:
+## Output Layer
 - 1 neuron
 - Sigmoid activation
 
@@ -64,11 +64,11 @@ Output Layer:
 
 Binary Cross Entropy Loss:
 
-\[
+```math
 L = -\frac{1}{m}\sum \left[
 Y \log(A) + (1-Y)\log(1-A)
 \right]
-\]
+```
 
 ---
 
@@ -78,9 +78,9 @@ Y \log(A) + (1-Y)\log(1-A)
 
 Basic gradient descent update:
 
-\[
+```math
 \theta = \theta - \eta \nabla_\theta
-\]
+```
 
 ---
 
@@ -88,13 +88,13 @@ Basic gradient descent update:
 
 Uses moving average of gradients:
 
-\[
+```math
 v_t = \beta v_{t-1} + (1-\beta)g_t
-\]
+```
 
-\[
+```math
 \theta = \theta - \eta v_t
-\]
+```
 
 Helps accelerate convergence and reduce oscillations.
 
@@ -110,9 +110,9 @@ Tracks:
 
 Update rule:
 
-\[
+```math
 \theta = \theta - \eta \frac{\hat{m}_t}{\sqrt{\hat{v}_t}+\epsilon}
-\]
+```
 
 ---
 
@@ -122,7 +122,7 @@ Adam with decoupled weight decay regularization.
 
 Update rule:
 
-\[
+```math
 \theta =
 \theta -
 \eta
@@ -131,7 +131,7 @@ Update rule:
 +
 \lambda \theta
 \right)
-\]
+```
 
 Used widely in modern deep learning systems and transformers.
 
@@ -167,9 +167,9 @@ python gradient.py
 
 ```text
 SGD (lr = 0.1)
-[MOMENTUM] Epoch 100 | Train Loss: 0.23
+[SGD     ] Epoch 100 | Train Loss: 0.23
 ...
-[ADAMW] Final Test Accuracy : 97.5%
+[ADAMW   ] Final Test Accuracy : 97.5%
 ```
 
 ---
@@ -182,7 +182,7 @@ This project helps understand:
 - Forward propagation
 - Backpropagation
 - Gradient computation
-- Momentum
+- Momentum optimization
 - Adaptive optimization
 - Bias correction in Adam
 - Weight decay regularization
@@ -191,20 +191,6 @@ This project helps understand:
 
 ---
 
-# Future Improvements
-
-Possible extensions:
-
-- ReLU activation
-- Softmax multiclass classification
-- Learning rate scheduling
-- Dropout regularization
-- Mini-batch gradient descent
-- Visualization of decision boundaries
-- PyTorch reimplementation
-- Deeper neural networks
-
----
 
 # Technologies Used
 
@@ -213,3 +199,8 @@ Possible extensions:
 
 ---
 
+# Educational Purpose
+
+This project is built for learning and research-oriented understanding of optimization algorithms in deep learning.
+
+The implementation prioritizes mathematical clarity and transparency over framework abstraction.
