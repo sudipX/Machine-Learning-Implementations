@@ -12,12 +12,6 @@ The functions implemented are Step, Sigmoid, Tanh, ReLU, Leaky ReLU, ELU, and GE
 
 ---
 
-## Vanishing Gradient Demo
-
-At the end of the script, there is a simple experiment that multiplies sigmoid and ReLU derivatives across an increasing number of layers (1, 5, 10, 20, 50). This illustrates why sigmoid activations cause gradients to shrink exponentially with depth, while ReLU keeps them stable.
-
----
-
 ## Requirements
 
 ```bash
