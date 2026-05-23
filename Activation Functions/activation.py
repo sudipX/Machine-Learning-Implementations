@@ -75,5 +75,5 @@ print(f"Sigmoid: \n {sigmoid(z_test)}\n{sigmoid_derivative(z_test)}\n ")
 print(f"ReLU:\n {relu(z_test)}\n{relu_derivative(z_test)}\n ")
 print(f"Leaky ReLU: {leaky_relu(z_test)}\n{leaky_relu_derivative(z_test)}\n ")
 print(f"GELU: {gelu(z_test)}\n{gelu_derivative(z_test)}\n ")
-print(f"Softmax: {softmax(z_test)}\n")
+print(f"Softmax: {softmax(z_test)}\n") 
 
