@@ -24,108 +24,114 @@ The goal of this project is to deeply understand:
 
 - Pure NumPy implementation
 - Beginner-friendly code
-- Includes gradient derivations in code form
+- Includes gradient derivations
 - Numerical stability using `np.clip()`
 - Regression + Classification losses
-- Sample demonstrations with outputs
+- Example demonstrations with outputs
 
 ---
 
 # Implemented Loss Functions
 
-## Regression Losses
-
-### 1. Mean Squared Error (MSE)
+# 1. Mean Squared Error (MSE)
 
 Used mainly for regression problems.
 
-Formula:
+### Formula
 
-\[
-MSE = \frac{1}{n} \sum (y_{true} - y_{pred})^2
-\]
+```math
+MSE = \frac{1}{n} \sum_{i=1}^{n}(y_i - \hat{y}_i)^2
+```
 
-Gradient:
+### Gradient
 
-\[
-\frac{2(y_{pred} - y_{true})}{n}
-\]
-
----
-
-### 2. Mean Absolute Error (MAE)
-
-Measures absolute differences.
-
-Formula:
-
-\[
-MAE = \frac{1}{n} \sum |y_{true} - y_{pred}|
-\]
-
-Gradient:
-
-\[
-\frac{sign(y_{pred} - y_{true})}{n}
-\]
+```math
+\frac{\partial L}{\partial \hat{y}} = \frac{2(\hat{y} - y)}{n}
+```
 
 ---
 
-### 3. Huber Loss
+# 2. Mean Absolute Error (MAE)
 
-Combines advantages of MSE and MAE.
+Measures absolute differences between prediction and ground truth.
+
+### Formula
+
+```math
+MAE = \frac{1}{n} \sum_{i=1}^{n}|y_i - \hat{y}_i|
+```
+
+### Gradient
+
+```math
+\frac{\partial L}{\partial \hat{y}} = \frac{sign(\hat{y} - y)}{n}
+```
+
+---
+
+# 3. Huber Loss
+
+Huber Loss combines the advantages of MSE and MAE.
 
 - Quadratic for small errors
 - Linear for large errors
-- More robust to outliers
+- Robust to outliers
 
-Formula:
+### Formula
 
-\[
+```math
 L_\delta(a) =
 \begin{cases}
 \frac{1}{2}a^2 & |a| \le \delta \\
-\delta(|a| - \frac{1}{2}\delta) & otherwise
+\delta(|a| - \frac{1}{2}\delta) & |a| > \delta
 \end{cases}
-\]
+```
 
 ---
 
-# Classification Losses
+# 4. Binary Cross Entropy (BCE)
 
-## 4. Binary Cross Entropy (BCE)
+Used for binary classification tasks.
 
-Used for binary classification.
+### Formula
 
-Formula:
+```math
+BCE = -\left[y\log(p) + (1-y)\log(1-p)\right]
+```
 
-\[
-BCE = -[y \log(p) + (1-y)\log(1-p)]
-\]
+### Gradient
 
-Implemented with:
+```math
+\frac{\partial L}{\partial \hat{y}}
+=
+-\frac{y}{\hat{y}}
++
+\frac{1-y}{1-\hat{y}}
+```
 
-- Stable clipping
-- Standard BCE gradient
-- Simplified sigmoid + BCE gradient
+### Simplified Sigmoid + BCE Gradient
+
+```math
+\frac{\partial L}{\partial z} = \hat{y} - y
+```
 
 ---
 
-## 5. Categorical Cross Entropy (CCE)
+# 5. Categorical Cross Entropy (CCE)
 
-Used for multi-class classification.
+Used for multi-class classification problems.
 
-Formula:
+### Formula
 
-\[
-CCE = -\sum y_i \log(\hat{y}_i)
-\]
+```math
+CCE = -\sum_{i=1}^{k} y_i \log(\hat{y}_i)
+```
 
-Includes:
+### Simplified Softmax + CCE Gradient
 
-- One-hot encoded labels
-- Softmax probabilities
-- Simplified Softmax + CCE gradient
+```math
+\frac{\partial L}{\partial z} = \hat{y} - y
+```
 
 ---
 
@@ -166,6 +172,7 @@ python loss_functions.py
 ```python
 True : [3. 5. 2. 8.]
 Predicted : [2.5 5.5 3.9 5. ]
+
 Residuals : [ 0.5 -0.5 -1.9  3. ]
 
 MSE = 3.2775
@@ -213,7 +220,3 @@ Especially useful if you are implementing:
 - Research-oriented ML systems
 
 ---
-
-
-
-
