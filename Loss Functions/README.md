@@ -160,7 +160,7 @@ pip install numpy
 Run the script:
 
 ```bash
-python loss_functions.py
+python loss.py
 ```
 
 ---
