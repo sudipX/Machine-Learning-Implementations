@@ -46,7 +46,7 @@ pip install numpy
 ## Running
 
 ```bash
-python xor_nn.py
+python backpropagation.py
 ```
 
 Sample output:
