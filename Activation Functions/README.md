@@ -23,7 +23,7 @@ pip install numpy
 ## Running
 
 ```bash
-python activations.py
+python activation.py
 ```
 
 The script prints three sections: activation tables for each function, the softmax output with probabilities and predicted class, and the vanishing gradient comparison between sigmoid and ReLU across layer depths.
